@@ -3,8 +3,6 @@ const express = require("express");
 const db = require("../backend/src/db");
 const router = express.Router();
 
-const notes = [];
-
 router.get("/", async (req, res) => {
   try {
     const notes = await db.any("SELECT * FROM notes");
@@ -23,8 +21,6 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
   const { title, content } = req.body;
 
-  console.log(req.body);
-
   try {
     const newNote = await db.one(
       "INSERT INTO notes(title, content) VALUES($1, $2) RETURNING *",
@@ -33,6 +29,34 @@ router.post("/", async (req, res) => {
     res.status(201).json(newNote);
   } catch (error) {
     console.error("Error inserting note into PostgreSQL", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+router.put("/:id", async (req, res) => {
+  const noteId = req.params.id;
+  const { title, content } = req.body;
+
+  try {
+    const updatedNote = await db.one(
+      "UPDATE notes SET title = $1, content = $2 WHERE id = $3 RETURNING *",
+      [title, content, noteId]
+    );
+    res.json(updatedNote);
+  } catch (error) {
+    console.error("Error updating note in PostgreSQL", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  const noteId = req.params.id;
+
+  try {
+    await db.none("DELETE FROM notes WHERE id = $1", [noteId]);
+    res.json({ message: "Note deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting note from PostgreSQL", error);
     res.status(500).send("Internal Server Error");
   }
 });
