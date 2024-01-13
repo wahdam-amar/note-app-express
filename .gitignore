@@ -33,3 +33,6 @@ Thumbs.db
 /.vite/
 
 # Environment variables
+.env
+
+docker/

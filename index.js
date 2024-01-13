@@ -1,9 +1,13 @@
 const express = require("express");
+const db = require("./backend/src/db");
 const app = express();
 const port = 3000;
 
-// Require the notes router
 const notesRouter = require("./route/note");
+
+require("dotenv").config();
+
+app.use(express.json());
 
 // Use the notes router for the '/api/notes' route
 app.use("/api/notes", notesRouter);
