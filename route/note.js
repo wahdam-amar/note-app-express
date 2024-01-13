@@ -37,12 +37,22 @@ router.put("/:id", async (req, res) => {
   const noteId = req.params.id;
   const { title, content } = req.body;
 
+  // Validate if title is null
+  if (!title) {
+    return res.status(400).json({ error: "Title cannot be null" });
+  }
+
   try {
     const updatedNote = await db.one(
       "UPDATE notes SET title = $1, content = $2 WHERE id = $3 RETURNING *",
       [title, content, noteId]
     );
-    res.json(updatedNote);
+
+    // Enhance information on success
+    res.json({
+      message: "Note updated successfully",
+      updatedNote,
+    });
   } catch (error) {
     console.error("Error updating note in PostgreSQL", error);
     res.status(500).send("Internal Server Error");
