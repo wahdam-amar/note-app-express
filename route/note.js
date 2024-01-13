@@ -43,6 +43,16 @@ router.put("/:id", async (req, res) => {
   }
 
   try {
+    // Check if the note with the given id exists
+    const existingNote = await db.oneOrNone(
+      "SELECT * FROM notes WHERE id = $1",
+      [noteId]
+    );
+
+    if (!existingNote) {
+      return res.status(404).json({ error: "Note not found" });
+    }
+
     const updatedNote = await db.one(
       "UPDATE notes SET title = $1, content = $2 WHERE id = $3 RETURNING *",
       [title, content, noteId]
