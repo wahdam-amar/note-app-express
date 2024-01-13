@@ -1,7 +1,10 @@
 // routes/notes.js
 const express = require("express");
 const db = require("../backend/src/db");
+const authenticate = require("../middleware/authenticate");
 const router = express.Router();
+
+router.use(authenticate);
 
 router.get("/", async (req, res) => {
   try {
