@@ -42,7 +42,7 @@ router.post("/login", async (req, res) => {
     expiresIn: "1h",
   });
 
-  res.json({ message: "Login successful", token });
+  res.json({ message: "Login successful", user_id: user.id, token });
 });
 
 module.exports = router;
